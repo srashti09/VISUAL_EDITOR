@@ -8,7 +8,8 @@ const MidArea = () => {
   const { moveCat, sayHello, thinkHmm, addToSequence ,addToHistory } = useContext(AppContext);
   console.log("Context values in MidArea:", { moveCat, sayHello, thinkHmm, addToSequence , addToHistory });
   const [blocks, setBlocks] = React.useState([]);
-  console.log("this is ",useContext(AppContext));
+  //console.log("this is ",useContext(AppContext));
+
   const handleDrop = (item) => {
     console.log("Block dropped:", item.content);
     setBlocks((prevBlocks) => [...prevBlocks, item]);
