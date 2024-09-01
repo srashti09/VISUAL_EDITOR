@@ -24,7 +24,7 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => setMessage(''), 2000); // Clear message after 2 seconds
   };
 
-  const addToActionHistory = (action) => {
+  const addToHistory = (action) => {
     setActionHistory([...actionHistory, action]);
   };
 
@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
         moveCat,
         sayHello,
         thinkHmm,
-        addToActionHistory,
+        addToHistory,
         replayActions,
       }}
     >

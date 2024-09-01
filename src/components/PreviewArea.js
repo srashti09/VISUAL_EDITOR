@@ -5,6 +5,10 @@ import { AppContext } from './ContextAPI';
 const PreviewArea = () => {
   const { spritePosition, message, replayActions } = useContext(AppContext);
 
+  const runActions=()=> {
+    replayActions();
+  }
+
   return (
     <div className="w-1/3 h-full flex flex-col bg-white p-4">
       <div className="relative flex-1 border border-gray-300">
@@ -21,8 +25,11 @@ const PreviewArea = () => {
           </div>
         )}
       </div>
+      <button onClick={runActions} className="mt-4 bg-yellow-500 text-white p-2 rounded">
+        RUN
+      </button>
       <button onClick={replayActions} className="mt-4 bg-yellow-500 text-white p-2 rounded">
-        Replay
+        REPLAY
       </button>
     </div>
   );

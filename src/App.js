@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MidArea from './components/MidArea';
 import PreviewArea from './components/PreviewArea';
-import { AppContext } from './components/ContextAPI';
+import { AppProvider } from './components/ContextAPI';
 
 export default function App() {
   const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
@@ -34,8 +34,10 @@ export default function App() {
   };
 
   const handleRun = () => {
-    console.log("Running actions:", actions); // Check what's in the actions array
+    console.log("Running actions:", actions);
+     // Check what's in the actions array
     actions.forEach((action, index) => {
+      console.log("yes");
       setTimeout(() => {
         console.log(`Executing action at index: ${index}`);
         action(); // Directly execute the stored function
@@ -67,7 +69,7 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{
+    <AppProvider value={{
       spritePosition,
       message,
       moveCat: handleMove,
@@ -90,6 +92,6 @@ export default function App() {
           </div>
         </div>
       </div>
-    </AppContext.Provider>
+    </AppProvider>
   );
 }

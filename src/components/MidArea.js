@@ -5,8 +5,8 @@ import { AppContext } from './ContextAPI';
 
 
 const MidArea = () => {
-  const { moveCat, sayHello, thinkHmm, addToSequence ,addToActionHistory } = useContext(AppContext);
-  console.log("Context values in MidArea:", { moveCat, sayHello, thinkHmm, addToSequence , addToActionHistory });
+  const { moveCat, sayHello, thinkHmm, addToSequence ,addToHistory } = useContext(AppContext);
+  console.log("Context values in MidArea:", { moveCat, sayHello, thinkHmm, addToSequence , addToHistory });
   const [blocks, setBlocks] = React.useState([]);
   console.log("this is ",useContext(AppContext));
   const handleDrop = (item) => {
@@ -17,15 +17,15 @@ const MidArea = () => {
     switch (item.content) {
       case 'Move 10 steps':
         //addToSequence(moveCat);
-        addToActionHistory(moveCat);
+        addToHistory(moveCat);
         break;
       case 'Say Hello':
         //addToSequence(sayHello);
-        addToActionHistory(sayHello);
+        addToHistory(sayHello);
         break;
       case 'Think Hmm...':
        // addToSequence(thinkHmm);
-        addToActionHistory(thinkHmm);
+        addToHistory(thinkHmm);
         break;
       default:
         break;
