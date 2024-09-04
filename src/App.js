@@ -2,96 +2,101 @@ import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MidArea from './components/MidArea';
 import PreviewArea from './components/PreviewArea';
-import { AppProvider } from './components/ContextAPI';
 
 export default function App() {
   const [spritePosition, setSpritePosition] = useState({ x: 0, y: 0 });
-  const [actions, setActions] = useState([]); // Store actions history
+  const [spriteRotate, setSpriteRotate] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [spriteSize, setSpriteSize] = useState(100);
   const [message, setMessage] = useState("");
+  const [actionHistory, setActionHistory] = useState([]); 
+  const [midAreaActions, setMidAreaActions] = useState([]); 
+
+  const handleMove = () => setSpritePosition({ ...spritePosition, x: spritePosition.x + 10 });
+  const handleRotate = () => setSpriteRotate(spriteRotate + 45);
+  const handleChangeX = (value) => setSpritePosition({ ...spritePosition, x: spritePosition.x + value });
+  const handleChangeY = (value) => setSpritePosition({ ...spritePosition, y: spritePosition.y + value });
+  const handleShow = () => setIsVisible(true);
+  const handleHide = () => setIsVisible(false);
+  const handleChangeSize = (sizeChange) => setSpriteSize(spriteSize + sizeChange);
+  const handleSayHello = () => setMessage("Hello!");
+  const handleThinkHmm = () => setMessage("Hmm...");
 
   const addToHistory = (action) => {
-    setActions((prevActions) => [...prevActions, action]);
+    setActionHistory(prevHistory => [...prevHistory, action]);
   };
 
-  const handleMove = () => {
-    setSpritePosition((prevPosition) => ({
-      ...prevPosition,
-      x: prevPosition.x + 10,
-    }));
-    addToHistory("Move 10 steps");
+  const addMidAreaAction = (action) => {
+    setMidAreaActions(prevActions => [...prevActions, action]);
   };
 
-  const handleSayHello = () => {
-    setMessage("Hello!");
-    addToHistory("Say Hello");
-    setTimeout(() => setMessage(""), 2000); // Clear after 2 seconds
-  };
-
-  const handleThinkHmm = () => {
-    setMessage("Hmm...");
-    addToHistory("Think Hmm...");
-    setTimeout(() => setMessage(""), 2000); // Clear after 2 seconds
-  };
-
-  const handleRun = () => {
-    console.log("Running actions:", actions);
-     // Check what's in the actions array
-    actions.forEach((action, index) => {
-      console.log("yes");
-      setTimeout(() => {
-        console.log(`Executing action at index: ${index}`);
-        action(); // Directly execute the stored function
-      }, index * 1000); // 1-second delay between actions
-    });
-  };
-  
-  
-  
-
-  const handleReplay = (index) => {
-    const action = actions[index];
-    switch (action) {
-      case 'Move 10 steps':
-        handleMove();
-        break;
-      case 'Say Hello':
-        handleSayHello();
-        break;
-      case 'Think Hmm...':
-        handleThinkHmm();
-        break;
-      default:
-        break;
+  const runMidAreaActions = async () => {
+    for (let { action } of midAreaActions) {
+      action(); // Execute the action
+      addToHistory(action); // Store action in history
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Add delay between actions
     }
   };
-  const addToSequence = (action) => {
-    setActions((prevActions) => [...prevActions, action]);
+  
+  
+  const replayAllActions = async () => {
+    for (let action of actionHistory) {
+      action();
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+    }
   };
 
+  const removeBlockFromMidArea = (content) => {
+    setMidAreaActions((prevActions) => prevActions.filter((item) => item.name !== content));
+    //setBlocks((prevBlocks) => prevBlocks.filter((block) => block.content !== content)); // Keep in sync
+  };
+  
+
   return (
-    <AppProvider value={{
-      spritePosition,
-      message,
-      moveCat: handleMove,
-      sayHello: handleSayHello,
-      thinkHmm: handleThinkHmm,
-      run: handleRun,
-      replay: handleReplay,
-      actions,
-        addToSequence ,
-        addToHistory
-    }}>
-      <div className="bg-blue-100 pt-6 font-sans">
-        <div className="h-screen overflow-hidden flex flex-row">
-          <div className="flex-1 h-screen overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-tr-xl mr-2">
-            <Sidebar onMove={handleMove} onSayHello={handleSayHello} onThinkHmm={handleThinkHmm} />
-            <MidArea />
-          </div>
-          <div className="w-1/3 h-screen overflow-hidden flex flex-col bg-white border-t border-l border-gray-200 rounded-tl-xl ml-2">
-            <PreviewArea />
-          </div>
+    <div className="bg-blue-100 pt-6 font-sans">
+      <div className="h-screen overflow-hidden flex flex-row">
+        <div className="flex-1 h-screen overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-tr-xl mr-2">
+          <Sidebar 
+            onMove={handleMove} 
+            onChangeX={handleChangeX} 
+            onChangeY={handleChangeY} 
+            onShow={handleShow}
+            onHide={handleHide} 
+            onChangeSize={handleChangeSize} 
+            onRotate={handleRotate} 
+            onSayHello={handleSayHello} 
+            onThinkHmm={handleThinkHmm}
+            addToHistory={addToHistory}
+            removeBlockFromMidArea={removeBlockFromMidArea} 
+          />
+          <MidArea 
+            moveCat={handleMove}
+            rotateCat={handleRotate}
+            sayHello={handleSayHello}
+            thinkHmm={handleThinkHmm}
+            addToHistory={addToHistory}  
+            addMidAreaAction={addMidAreaAction} 
+            changeX={handleChangeX} 
+            changeY={handleChangeY} 
+            onShow={handleShow}
+            onHide={handleHide} 
+            onChangeSize={handleChangeSize} 
+            removeBlockFromMidArea={removeBlockFromMidArea} 
+          />
+        </div>
+        <div className="w-1/3 h-screen overflow-hidden flex flex-col bg-white border-t border-l border-gray-200 rounded-tl-xl ml-2">
+          <PreviewArea 
+            spritePosition={spritePosition} 
+            spriteRotate={spriteRotate} 
+            isVisible={isVisible} 
+            spriteSize={spriteSize}
+            message={message}
+            setMessage={setMessage}
+            runActions={runMidAreaActions} 
+            replayActions={replayAllActions} 
+          />
         </div>
       </div>
-    </AppProvider>
+    </div>
   );
 }

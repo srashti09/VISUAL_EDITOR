@@ -1,31 +1,47 @@
 import React from "react";
 import MotionBlock from "./MotionBlock";
 import LooksBlock from "./LooksBlock";
-import Icon from "./Icon";
+import { useDrop } from 'react-dnd';
+import { ItemTypes } from './ItemTypes';
 
-export default function Sidebar ({ onMove,onSayHello,onThinkHmm }) {
+export default function Sidebar({ 
+  onMove, 
+  onSayHello, 
+  onThinkHmm, 
+  onRotate, 
+  onChangeX, 
+  onChangeY, 
+  onShow, 
+  onHide, 
+  onChangeSize,
+  removeBlockFromMidArea 
+}) {
+  const [, drop] = useDrop({
+    accept: [ItemTypes.MOTION_BLOCK, ItemTypes.LOOKS_BLOCK],
+    drop: (item) => {
+      console.log(item.content);
+      removeBlockFromMidArea(item.content); 
+      console.log(item.content); // Remove block by content instead of index
+    },
+  });
+
   return (
-    <div className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-2 border-r border-gray-200">
-      <div className="font-bold"> {"Events"} </div>
-      <div className="flex flex-row flex-wrap bg-yellow-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"When "}
-        <Icon name="flag" size={15} className="text-green-600 mx-2" />
-        {"clicked"}
-      </div>
-      <div className="flex flex-row flex-wrap bg-yellow-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"When this sprite clicked"}
-      </div>
-      
-      {/* Motion Category */}
+    <div ref={drop} className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-2 border-r border-gray-200">
       <div className="font-bold"> {"Motion"} </div>
-      <MotionBlock onMove={onMove} />  {/* Motion blocks will be rendered here */}
-
-      {/* Looks Category */}
+      <MotionBlock 
+        onMove={onMove} 
+        onRotate={onRotate} 
+        onChangeX={onChangeX} 
+        onChangeY={onChangeY} 
+      />
       <div className="font-bold"> {"Looks"} </div>
       <LooksBlock 
-      onSayHello={onSayHello}  // Pass the handler for "Say Hello"
-      onThinkHmm={onThinkHmm}  // Pass the handler for "Think Hmm..."
-        />  
+        onSayHello={onSayHello}  
+        onThinkHmm={onThinkHmm}  
+        onHide={onHide}
+        onShow={onShow}
+        onChangeSize={onChangeSize}
+      />
     </div>
   );
 }

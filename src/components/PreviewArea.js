@@ -1,18 +1,52 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import CatSprite from './CatSprite';
-import { AppContext } from './ContextAPI';
 
-const PreviewArea = () => {
-  const { spritePosition, message, replayActions } = useContext(AppContext);
+const PreviewArea = ({ spritePosition, spriteRotate, isVisible, spriteSize, message, setMessage, replayActions, runActions }) => {
+  const [isRunning, setIsRunning] = useState(false);
 
-  const runActions=()=> {
-    replayActions();
-  }
+  // Clear the message after 3 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(""); // Clear the message after 3 seconds
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, setMessage]);
+
+  const handleRunClick = async () => {
+    setIsRunning(true);
+    try {
+        await runActions(); // Run the actions
+    } catch (error) {
+        console.error('Error running actions:', error);
+    } finally {
+        setIsRunning(false);
+    }
+};
+
+const handleReplayClick = async () => {
+    setIsRunning(true);
+    try {
+        await replayActions(); // Replay the actions
+    } catch (error) {
+        console.error('Error replaying actions:', error);
+    } finally {
+        setIsRunning(false);
+    }
+};
+
 
   return (
     <div className="w-1/3 h-full flex flex-col bg-white p-4">
       <div className="relative flex-1 border border-gray-300">
-        <CatSprite position={spritePosition} />
+        {isVisible && (
+          <CatSprite 
+            position={spritePosition} 
+            rotation={spriteRotate} 
+            size={spriteSize} 
+          />
+        )}
         {message && (
           <div
             className="absolute bg-white text-black border border-gray-300 p-2 rounded"
@@ -25,10 +59,18 @@ const PreviewArea = () => {
           </div>
         )}
       </div>
-      <button onClick={runActions} className="mt-4 bg-yellow-500 text-white p-2 rounded">
+      <button 
+        onClick={handleRunClick} 
+        className="mt-4 bg-yellow-500 text-white p-2 rounded" 
+        disabled={isRunning}
+      >
         RUN
       </button>
-      <button onClick={replayActions} className="mt-4 bg-yellow-500 text-white p-2 rounded">
+      <button 
+        onClick={handleReplayClick} 
+        className="mt-4 bg-yellow-500 text-white p-2 rounded" 
+        disabled={isRunning}
+      >
         REPLAY
       </button>
     </div>

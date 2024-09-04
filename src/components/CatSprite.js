@@ -1,15 +1,17 @@
 import React from "react";
 
-export default function CatSprite({ position = { x: 0, y: 0 }, speech = "" }) {
+export default function CatSprite({ position = { x: 0, y: 0 }, rotation = 0, isVisible = true, size = 100,speech = "" }) {
+  if (!isVisible) return null;
   return (
     <div
       style={{
         position: "absolute",
         left: `${position.x}px`,
         top: `${position.y}px`,
-        transition: "left 0.5s ease",
-      }}
-    >
+       transform: `rotate(${rotation}deg) scale(${size / 100})`,   // Use the rotation prop here
+        transition: "left 0.5s ease, top 0.5s ease, transform 0.5s ease",
+      }} 
+      >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="95.17898101806641"
